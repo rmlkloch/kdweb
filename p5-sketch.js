@@ -1,30 +1,29 @@
-// File: p5-sketch.js
+// File: p5-sketch.js (Updated Colors)
 
 function sketch(p) {
     let particles = [];
-    const numParticles = 100;
+    const numParticles = 80; // Reduced particles for subtlety
 
     p.setup = function() {
         const container = document.getElementById('p5-sketch-container');
-        if (!container) {
-            console.error("p5 container not found");
-            return;
-        }
-        // Create canvas matching container size
+        if (!container) return;
         let cnv = p.createCanvas(container.offsetWidth, container.offsetHeight);
-        cnv.parent('p5-sketch-container'); // Attach canvas to the container
-        cnv.style('display', 'block'); // Ensure canvas takes up space correctly
+        cnv.parent('p5-sketch-container');
+        cnv.style('display', 'block');
 
         for (let i = 0; i < numParticles; i++) {
             particles.push(new Particle(p.random(p.width), p.random(p.height), p));
         }
-        p.stroke(200, 150, 255, 30); // Subtle purple lines with alpha
+        // Subtle grey lines for dark theme
+        p.stroke(100, 100, 100, 15); // Grey color with very low alpha
         p.strokeWeight(1);
+        // Optional: Add a very rare gold particle stroke
+        // if (p.random(1) < 0.01) p.stroke(192, 160, 128, 20);
     };
 
     p.draw = function() {
-        // Don't clear background for trails effect, or use a low alpha background
-        // p.background(248, 249, 250, 5); // Very subtle background clear for fading trails
+         // Very subtle background clear to prevent too much buildup
+         // p.background(26, 26, 26, 2); // Match body bg with low alpha
 
         particles.forEach(particle => {
             particle.update();
@@ -33,74 +32,66 @@ function sketch(p) {
         });
     };
 
-     p.windowResized = function() {
-        const container = document.getElementById('p5-sketch-container');
-         if (container) {
-             p.resizeCanvas(container.offsetWidth, container.offsetHeight);
-         }
+    p.windowResized = function() {
+       const container = document.getElementById('p5-sketch-container');
+        if (container) {
+            p.resizeCanvas(container.offsetWidth, container.offsetHeight);
+        }
     }
 
-    // Particle class
     class Particle {
         constructor(x, y, p) {
-            this.p = p; // Reference to p5 instance
+            this.p = p;
             this.pos = this.p.createVector(x, y);
-            this.vel = p5.Vector.random2D().mult(this.p.random(0.5, 1.5)); // Random velocity
+            this.vel = p5.Vector.random2D().mult(this.p.random(0.3, 0.8)); // Slower particles
             this.acc = this.p.createVector(0, 0);
-            this.maxSpeed = 1; // Limit speed
-            this.history = []; // To draw trails
+            this.maxSpeed = 0.8;
+            this.history = [];
         }
 
         update() {
-            // Simple perlin noise flow field
-            let angle = this.p.noise(this.pos.x * 0.005, this.pos.y * 0.005) * this.p.TWO_PI * 2;
+            let angle = this.p.noise(this.pos.x * 0.003, this.pos.y * 0.003) * this.p.TWO_PI * 2;
             let force = p5.Vector.fromAngle(angle);
-            force.mult(0.05); // Strength of the flow field
+            force.mult(0.03);
             this.acc.add(force);
-
 
             this.vel.add(this.acc);
             this.vel.limit(this.maxSpeed);
             this.pos.add(this.vel);
-            this.acc.mult(0); // Reset acceleration
+            this.acc.mult(0);
 
-             // Add current position to history
             this.history.push(this.pos.copy());
-            // Limit history length
-            if (this.history.length > 30) { // Trail length
+            if (this.history.length > 20) { // Shorter trails
                 this.history.splice(0, 1);
             }
         }
 
         show() {
-             // Draw trail
-             this.p.beginShape();
-             this.p.noFill();
-             for (let i = 0; i < this.history.length; i++) {
+            this.p.beginShape();
+            this.p.noFill();
+            // Optional: Vary stroke alpha based on history position for fading effect
+            for (let i = 0; i < this.history.length; i++) {
                 let pos = this.history[i];
-                 this.p.vertex(pos.x, pos.y);
-             }
-             this.p.endShape();
-
-            // Draw particle itself (optional, can be just trails)
-            // this.p.fill(200, 150, 255, 50);
-            // this.p.noStroke();
-            // this.p.ellipse(this.pos.x, this.pos.y, 2, 2);
+                 // let alpha = p.map(i, 0, this.history.length, 0, 15); // Map alpha
+                 // p.stroke(100, 100, 100, alpha); // Apply dynamic alpha
+                this.p.vertex(pos.x, pos.y);
+            }
+             // Reset stroke for next particle if dynamically changed
+             // p.stroke(100, 100, 100, 15);
+            this.p.endShape();
         }
 
         edges() {
-             // Wrap around edges
-             if (this.pos.x > this.p.width) { this.pos.x = 0; this.history = []; }
-             if (this.pos.x < 0) { this.pos.x = this.p.width; this.history = []; }
-             if (this.pos.y > this.p.height) { this.pos.y = 0; this.history = []; }
-             if (this.pos.y < 0) { this.pos.y = this.p.height; this.history = []; }
+            if (this.pos.x > this.p.width + 10) { this.pos.x = -10; this.history = []; }
+            if (this.pos.x < -10) { this.pos.x = this.p.width + 10; this.history = []; }
+            if (this.pos.y > this.p.height + 10) { this.pos.y = -10; this.history = []; }
+            if (this.pos.y < -10) { this.pos.y = this.p.height + 10; this.history = []; }
         }
     }
 }
 
-// Initialize p5.js sketch in instance mode
 if (typeof p5 !== 'undefined') {
-     let myp5 = new p5(sketch);
+    let myp5 = new p5(sketch);
 } else {
     console.error("p5.js library not loaded.");
 }
