@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KDJ Salon - නවීන රූපලාවන්‍ය අත්දැකීම</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@300;400;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        body {
+            font-family: 'Poppins', 'Noto Sans Sinhala', sans-serif;
+            background-color: #f8f9fa; /* Light background */
+            color: #343a40; /* Darker text for contrast */
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600; /* Semi-bold headings */
+        }
+        p, li {
+            font-family: 'Noto Sans Sinhala', 'Poppins', sans-serif;
+            line-height: 1.8;
+            font-weight: 300; /* Lighter weight for body text */
+        }
+        html { scroll-behavior: smooth; }
+
+        /* Glassmorphism Effect (Example) */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        /* Subtle Animations */
+        .fade-in { animation: fadeIn 1s ease-in-out; }
+        @keyframes fadeIn { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+
+        /* Style for p5 canvas container */
+        #p5-sketch-container {
+            position: fixed; /* Or absolute, depending on design */
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1; /* Behind other content */
+            opacity: 0.1; /* Make it subtle */
+        }
+         /* Style for threejs canvas */
+        #three-canvas-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100vh; /* Full viewport height */
+            z-index: -2; /* Even further behind */
+            opacity: 0.6; /* Adjust as needed */
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    </head>
+<body class="antialiased">
+
+    <div id="three-canvas-container"></div>
+
+    <div id="p5-sketch-container"></div>
+
+    <header id="header" class="sticky top-0 z-50 transition-all duration-300 glass-effect">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-3xl font-bold text-purple-700 tracking-tight">KDJ Salon</a>
+            <button id="mobile-menu-button" class="md:hidden text-purple-700 focus:outline-none">
+                <i class="fas fa-bars fa-lg"></i>
+            </button>
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="#hero" class="text-gray-700 hover:text-purple-600 transition duration-300 font-medium">මුල් පිටුව</a>
+                <a href="#about" class="text-gray-700 hover:text-purple-600 transition duration-300 font-medium">අප ගැන</a>
+                <a href="#services" class="text-gray-700 hover:text-purple-600 transition duration-300 font-medium">සේවාවන්</a>
+                <a href="#features" class="text-gray-700 hover:text-purple-600 transition duration-300 font-medium">විශේෂතා</a>
+                 <a href="#blog" class="text-gray-700 hover:text-purple-600 transition duration-300 font-medium">ලිපි</a>
+                <a href="#contact" class="bg-purple-600 text-white py-2 px-6 rounded-full font-semibold hover:bg-purple-700 transition duration-300 shadow hover:shadow-lg">Book Now</a>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden bg-white bg-opacity-90 absolute top-full left-0 w-full shadow-lg">
+            <a href="#hero" class="block px-6 py-3 text-gray-700 hover:bg-purple-50">මුල් පිටුව</a>
+            <a href="#about" class="block px-6 py-3 text-gray-700 hover:bg-purple-50">අප ගැන</a>
+            <a href="#services" class="block px-6 py-3 text-gray-700 hover:bg-purple-50">සේවාවන්</a>
+            <a href="#features" class="block px-6 py-3 text-gray-700 hover:bg-purple-50">විශේෂතා</a>
+            <a href="#blog" class="block px-6 py-3 text-gray-700 hover:bg-purple-50">ලිපි</a>
+            <a href="#contact" class="block px-6 py-4 text-center bg-purple-600 text-white font-semibold hover:bg-purple-700">Book Now</a>
+        </div>
+    </header>
+
+    <section id="hero" class="min-h-screen flex items-center justify-center text-center px-6 relative overflow-hidden">
+        <div class="z-10 relative fade-in">
+            <h1 class="text-5xl md:text-7xl font-bold text-purple-900 mb-6 leading-tight drop-shadow-lg">
+                ඔබේ අලංකාරය, අපේ නිර්මාණයයි
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-700 mb-10 max-w-3xl mx-auto font-light drop-shadow">
+                KDJ Salon වෙතින් නවීනතම රූපලාවන්‍ය සේවාවන් සමග අසමසම අත්දැකීමක් ලබන්න.
+            </p>
+            <a href="#services" class="bg-white text-purple-700 py-3 px-10 rounded-full font-bold text-lg shadow-lg hover:shadow-xl hover:bg-gray-100 transition duration-300 transform hover:scale-105">අපේ සේවාවන් බලන්න</a>
+        </div>
+    </section>
+
+    <section id="about" class="py-24 px-6 bg-white">
+        <div class="container mx-auto max-w-5xl grid md:grid-cols-2 gap-12 items-center">
+            <div class="fade-in">
+                <h2 class="text-4xl font-bold text-purple-800 mb-6">KDJ Salon: අපේ කතාව</h2>
+                 <p class="text-gray-600 mb-4 font-light leading-relaxed">KDJ Salon යනු හුදෙක් රූපලාවන්‍යාගාරයක් පමණක් නොවේ. එය ඔබගේ සුන්දරත්වය සමරන, ඔබට විවේකී සුවය ලබා දෙන, ඔබේ විශ්වාසය වඩවන ස්ථානයකි. නවීන තාක්ෂණය, උසස් තත්වයේ නිෂ්පාදන සහ වසර ගණනාවක පළපුරුදු කාර්ය මණ්ඩලය අප සතු ශක්තියයි.</p>
+                <p class="text-gray-600 mb-6 font-light leading-relaxed">අපගේ දැක්ම වන්නේ කොළඹ ප්‍රමුඛතම, නවීනතම රූපලාවන්‍ය සේවා සපයන්නා බවට පත්වීමයි. ඔබේ තෘප්තිය අපගේ එකම අරමුණයි.</p>
+                <a href="#contact" class="text-purple-600 font-semibold hover:underline">අප හා එක්වන්න <i class="fas fa-arrow-right ml-2"></i></a>
+            </div>
+            <div class="p-8 rounded-lg bg-gradient-to-br from-purple-50 to-pink-50 shadow-lg fade-in" style="animation-delay: 0.2s;">
+                 <h3 class="text-2xl font-semibold text-purple-700 mb-4">අපගේ වටිනාකම්</h3>
+                 <ul class="space-y-3 text-gray-700">
+                     <li class="flex items-start"><i class="fas fa-check-circle text-purple-500 mt-1 mr-3"></i><span>විශිෂ්ටත්වය සහ ගුණාත්මකභාවය.</span></li>
+                     <li class="flex items-start"><i class="fas fa-check-circle text-purple-500 mt-1 mr-3"></i><span>පාරිභෝගික තෘප්තිය ප්‍රමුඛතාවය දීම.</span></li>
+                     <li class="flex items-start"><i class="fas fa-check-circle text-purple-500 mt-1 mr-3"></i><span>නවීන ප්‍රවණතා සහ තාක්ෂණය භාවිතය.</span></li>
+                     <li class="flex items-start"><i class="fas fa-check-circle text-purple-500 mt-1 mr-3"></i><span>සුවපහසු සහ මිත්‍රශීලී පරිසරය.</span></li>
+                 </ul>
+            </div>
+        </div>
+    </section>
+
+     <section id="services" class="py-24 px-6 bg-gradient-to-b from-gray-50 to-purple-50">
+        <div class="container mx-auto max-w-6xl">
+            <h2 class="text-4xl font-bold text-center text-purple-800 mb-16">අපෙන් ඔබට ලැබෙන සේවාවන්</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2 fade-in">
+                    <div class="text-purple-600 mb-4"><i class="fas fa-cut fa-3x"></i></div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">කෙස් සැකසුම්</h3>
+                    <p class="text-gray-600 mb-4 font-light">Haircuts, Styling, Updos, Treatments ඇතුළු සියලුම කෙස් සැකසුම්.</p>
+                    <button onclick="openModal('hairModal')" class="text-purple-600 font-medium hover:underline">වැඩි විස්තර <i class="fas fa-info-circle ml-1"></i></button>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2 fade-in" style="animation-delay: 0.1s;">
+                    <div class="text-pink-500 mb-4"><i class="fas fa-palette fa-3x"></i></div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">වර්ණ ගැන්වීම්</h3>
+                    <p class="text-gray-600 mb-4 font-light">Highlights, Balayage, Global Colors වැනි ලොව නවීනතම වර්ණ ගැන්වීම්.</p>
+                    <button onclick="openModal('colorModal')" class="text-pink-600 font-medium hover:underline">වැඩි විස්තර <i class="fas fa-info-circle ml-1"></i></button>
+                </div>
+                 <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2 fade-in" style="animation-delay: 0.2s;">
+                    <div class="text-teal-500 mb-4"><i class="fas fa-spa fa-3x"></i></div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">සමේ සත්කාර</h3>
+                    <p class="text-gray-600 mb-4 font-light">ඔබේ සමට ගැළපෙන Facials, Cleanups සහ විශේෂිත සමේ සත්කාර.</p>
+                   <button onclick="openModal('skinModal')" class="text-teal-600 font-medium hover:underline">වැඩි විස්තර <i class="fas fa-info-circle ml-1"></i></button>
+                </div>
+                 <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2 fade-in" style="animation-delay: 0.3s;">
+                    <div class="text-red-500 mb-4"><i class="fas fa-hand-sparkles fa-3x"></i></div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">Manicure/Pedicure</h3>
+                    <p class="text-gray-600 mb-4 font-light">අත් සහ පා වල සෞඛ්‍ය හා අලංකාරය සඳහා.</p>
+                   <button onclick="openModal('maniPediModal')" class="text-red-600 font-medium hover:underline">වැඩි විස්තර <i class="fas fa-info-circle ml-1"></i></button>
+                </div>
+                 <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2 fade-in" style="animation-delay: 0.4s;">
+                    <div class="text-yellow-500 mb-4"><i class="fas fa-female fa-3x"></i></div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">මනාලියන් සඳහා</h3>
+                    <p class="text-gray-600 mb-4 font-light">ඔබේ සිහින දිනයට අලංකාරව සැරසෙන්න.</p>
+                    <button onclick="openModal('bridalModal')" class="text-yellow-600 font-medium hover:underline">වැඩි විස්තර <i class="fas fa-info-circle ml-1"></i></button>
+                </div>
+                 <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 transform hover:-translate-y-2 fade-in" style="animation-delay: 0.5s;">
+                    <div class="text-indigo-500 mb-4"><i class="fas fa-ellipsis-h fa-3x"></i></div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-3">වෙනත් සේවාවන්</h3>
+                    <p class="text-gray-600 mb-4 font-light">Waxing, Threading සහ තවත් රූපලාවන්‍ය සේවා.</p>
+                    <button onclick="openModal('otherModal')" class="text-indigo-600 font-medium hover:underline">වැඩි විස්තර <i class="fas fa-info-circle ml-1"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+     <section id="features" class="py-24 px-6 bg-white">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center text-purple-800 mb-16">KDJ Salon: අපේ විශේෂතා</h2>
+            <div class="grid md:grid-cols-3 gap-10 text-center">
+                <div class="fade-in">
+                    <div class="p-6 bg-purple-100 rounded-full inline-block mb-4">
+                        <i class="fas fa-star fa-2x text-purple-600"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold text-gray-800 mb-2">පළපුරුදු කාර්ය මණ්ඩලය</h4>
+                    <p class="text-gray-600 font-light">රූපලාවන්‍ය ක්ෂේත්‍රයේ වසර ගණනාවක පළපුරුද්දක් ඇති වෘත්තිකයින්.</p>
+                </div>
+                 <div class="fade-in" style="animation-delay: 0.15s;">
+                    <div class="p-6 bg-pink-100 rounded-full inline-block mb-4">
+                         <i class="fas fa-gem fa-2x text-pink-600"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold text-gray-800 mb-2">උසස් තත්වයේ නිෂ්පාදන</h4>
+                    <p class="text-gray-600 font-light">ඔබේ සුන්දරත්වයට හානියක් නොවන ලොව පිළිගත් නිෂ්පාදන පමණි.</p>
+                </div>
+                 <div class="fade-in" style="animation-delay: 0.3s;">
+                    <div class="p-6 bg-teal-100 rounded-full inline-block mb-4">
+                        <i class="fas fa-heart fa-2x text-teal-600"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold text-gray-800 mb-2">සුවපහසු අත්දැකීමක්</h4>
+                     <p class="text-gray-600 font-light">නවීන පහසුකම් සහිත, නිස්කලංක, පිරිසිදු පරිසරයක්.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+     <section id="blog" class="py-24 px-6 bg-gray-100">
+        <div class="container mx-auto max-w-5xl">
+            <h2 class="text-4xl font-bold text-center text-purple-800 mb-16">රූපලාවන්‍ය ලිපි සහ උපදෙස්</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 fade-in">
+                    <div class="p-6">
+                        <span class="text-sm text-purple-600 font-semibold">කෙස් රැකවරණය</span>
+                        <h4 class="text-xl font-semibold text-gray-800 my-2">නිරෝගී කෙස් කළඹක් සඳහා සත්කාර 5ක්</h4>
+                        <p class="text-gray-600 font-light text-sm mb-4">ඔබේ කෙස් කළඹ සෞඛ්‍යමත්ව තබාගැනීමට සරල උපදෙස්...</p>
+                        <a href="#" class="text-purple-600 font-medium hover:underline text-sm">වැඩිදුර කියවන්න <i class="fas fa-arrow-right ml-1"></i></a>
+                    </div>
+                </div>
+                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 fade-in" style="animation-delay: 0.1s;">
+                    <div class="p-6">
+                         <span class="text-sm text-pink-600 font-semibold">සමේ සත්කාර</span>
+                        <h4 class="text-xl font-semibold text-gray-800 my-2">ඔබේ සමට ගැළපෙන Facial එක තෝරාගන්නේ කෙසේද?</h4>
+                        <p class="text-gray-600 font-light text-sm mb-4">විවිධ facial වර්ග සහ ඒවායේ ප්‍රතිලාභ ගැන දැනගන්න...</p>
+                        <a href="#" class="text-pink-600 font-medium hover:underline text-sm">වැඩිදුර කියවන්න <i class="fas fa-arrow-right ml-1"></i></a>
+                    </div>
+                </div>
+                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 fade-in" style="animation-delay: 0.2s;">
+                    <div class="p-6">
+                        <span class="text-sm text-teal-600 font-semibold">නවතම විලාසිතා</span>
+                        <h4 class="text-xl font-semibold text-gray-800 my-2">2025 වසරේ ජනප්‍රිය Hair Color Trends</h4>
+                         <p class="text-gray-600 font-light text-sm mb-4">ලොව නවතම කෙස් වර්ණ ගැන්වීමේ ප්‍රවණතා ගැන දැනුවත් වන්න...</p>
+                        <a href="#" class="text-teal-600 font-medium hover:underline text-sm">වැඩිදුර කියවන්න <i class="fas fa-arrow-right ml-1"></i></a>
+                    </div>
+                </div>
+                 </div>
+             <div class="text-center mt-12">
+                <a href="#" class="bg-purple-600 text-white py-3 px-8 rounded-full font-semibold hover:bg-purple-700 transition duration-300 shadow hover:shadow-lg">සියලුම ලිපි බලන්න</a>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="contact" class="py-24 px-6 bg-white">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-4xl font-bold text-center text-purple-800 mb-16">අපව සම්බන්ධ කරගන්න / දිනයක් වෙන්කරවා ගන්න</h2>
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="fade-in">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-6">සම්බන්ධීකරණ තොරතුරු</h3>
+                    <div class="space-y-5 text-gray-700">
+                        <p class="flex items-start"><i class="fas fa-map-marker-alt text-purple-500 mt-1 mr-4 fa-lg"></i><span>[ඔබේ සැලුන් එකේ ලිපිනය මෙතන දාන්න],<br>Colombo, Sri Lanka</span></p>
+                        <p class="flex items-center"><i class="fas fa-phone-alt text-purple-500 mr-4 fa-lg"></i><a href="tel:+94XXXXXXXXX" class="hover:text-purple-600">[ඔබේ දුරකථන අංකය]</a></p>
+                        <p class="flex items-center"><i class="fas fa-envelope text-purple-500 mr-4 fa-lg"></i><a href="mailto:info@kdjsalon.lk" class="hover:text-purple-600">info@kdjsalon.lk</a> (Example)</p>
+                        <p class="flex items-start"><i class="fas fa-clock text-purple-500 mt-1 mr-4 fa-lg"></i><span>සඳුදා - සෙනසුරාදා<br>උදෑසන 9:00 - සවස 7:00</span></p>
+                    </div>
+                    <div class="mt-8 space-x-4">
+                         <a href="#" class="text-purple-600 hover:text-purple-800 transition duration-300"><i class="fab fa-facebook-f fa-2x"></i></a>
+                         <a href="#" class="text-pink-600 hover:text-pink-800 transition duration-300"><i class="fab fa-instagram fa-2x"></i></a>
+                         <a href="#" class="text-green-600 hover:text-green-800 transition duration-300"><i class="fab fa-whatsapp fa-2x"></i></a>
+                    </div>
+                </div>
+                <div class="fade-in" style="animation-delay: 0.2s;">
+                     <h3 class="text-2xl font-semibold text-gray-800 mb-6">ඔබේ දිනය වෙන්කරවා ගැනීමට</h3>
+                    <form id="booking-form" class="space-y-5">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">නම</label>
+                            <input type="text" id="name" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500 transition duration-150" placeholder="ඔබේ සම්පූර්ණ නම">
+                        </div>
+                         <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">දුරකථන අංකය</label>
+                            <input type="tel" id="phone" name="phone" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500 transition duration-150" placeholder="07X XXX XXXX">
+                        </div>
+                         <div>
+                            <label for="service" class="block text-sm font-medium text-gray-700 mb-1">අවශ්‍ය සේවාව</label>
+                            <select id="service" name="service" required class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500 transition duration-150 bg-white">
+                                <option value="">සේවාවක් තෝරන්න...</option>
+                                <option value="haircut">Haircut & Styling</option>
+                                <option value="coloring">Hair Coloring</option>
+                                <option value="facial">Facial</option>
+                                <option value="manicure">Manicure/Pedicure</option>
+                                 <option value="bridal">Bridal Dressing</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                         <div>
+                            <label for="message" class="block text-sm font-medium text-gray-700 mb-1">වෙනත් විස්තර (Optional)</label>
+                            <textarea id="message" name="message" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500 transition duration-150" placeholder="ඔබට දැනුම් දීමට ඇති විශේෂ කරුණු"></textarea>
+                        </div>
+                        <div>
+                            <button type="submit" class="w-full bg-purple-600 text-white py-3 px-6 rounded-md font-semibold hover:bg-purple-700 transition duration-300 shadow hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">Booking ඉල්ලීම යවන්න</button>
+                        </div>
+                         <p id="form-message" class="text-sm text-center mt-4"></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+     <div id="hairModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-60 hidden p-4">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full relative transform transition-all duration-300 scale-95 opacity-0">
+            <button onclick="closeModal('hairModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            <div class="text-purple-600 mb-4"><i class="fas fa-cut fa-2x"></i></div>
+            <h3 class="text-2xl font-semibold mb-4">කෙස් සැකසුම් විස්තර</h3>
+            <p class="text-gray-600 mb-2 font-light">අපගේ විශේෂඥයින් වෙතින් නවතම විලාසිතාවන්ට අනුව hair cuts, precision cuts, stylish blowouts, elegant updos, සහ ඔබේ කෙස් කළඹට අවශ්‍ය විශේෂිත hair treatments ලබාගන්න.</p>
+            <p class="text-gray-600 font-light">අපි L'Oréal, Schwarzkopf වැනි උසස් තත්වයේ නිෂ්පාදන භාවිතා කරන්නෙමු.</p>
+             <p class="text-gray-600 font-light mt-3"><strong>ආරම්භක මිල:</strong> LKR XXXX</p>
+             <a href="#contact" onclick="closeModal('hairModal')" class="mt-6 inline-block bg-purple-600 text-white py-2 px-5 rounded-full font-semibold hover:bg-purple-700 transition duration-300">Book Now</a>
+        </div>
+    </div>
+    <div id="colorModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-60 hidden p-4"> <div class="bg-white rounded-lg shadow-xl p-8 max-w-md w-full relative transform transition-all duration-300 scale-95 opacity-0"><button onclick="closeModal('colorModal')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl">&times;</button> <div class="text-pink-500 mb-4"><i class="fas fa-palette fa-2x"></i></div><h3 class="text-2xl font-semibold mb-4">වර්ණ ගැන්වීම් විස්තර</h3><p class="text-gray-600 mb-2 font-light">Highlights, lowlights, balayage, ombre, global hair color වැනි ඕනෑම වර්ණ ගැන්වීමක් අපගේ වර්ණ ශිල්පීන්ගෙන් කරගන්න. ඔබේ සමට සහ මුහුණට ගැළපෙන වර්ණය තෝරාගැනීමට අපි ඔබට උපදෙස් දෙන්නෙමු.</p><p class="text-gray-600 font-light mt-3"><strong>ආරම්භක මිල:</strong> LKR YYYY</p><a href="#contact" onclick="closeModal('colorModal')" class="mt-6 inline-block bg-pink-600 text-white py-2 px-5 rounded-full font-semibold hover:bg-pink-700 transition duration-300">Book Now</a></div> </div>
+     <footer class="bg-gray-900 text-gray-400 py-12 px-6 mt-16">
+        <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h4 class="text-xl font-semibold text-white mb-4">KDJ Salon</h4>
+                <p class="text-sm font-light">නවීන රූපලාවන්‍ය කලාවේ නවාතැන.</p>
+                 <div class="mt-4 space-x-3">
+                     <a href="#" class="text-gray-400 hover:text-white transition duration-300"><i class="fab fa-facebook-f"></i></a>
+                     <a href="#" class="text-gray-400 hover:text-white transition duration-300"><i class="fab fa-instagram"></i></a>
+                     <a href="#" class="text-gray-400 hover:text-white transition duration-300"><i class="fab fa-whatsapp"></i></a>
+                 </div>
+            </div>
+             <div>
+                <h5 class="text-lg font-semibold text-white mb-4">ඉක්මන් සබැඳි</h5>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#about" class="hover:text-white transition duration-300">අප ගැන</a></li>
+                    <li><a href="#services" class="hover:text-white transition duration-300">සේවාවන්</a></li>
+                    <li><a href="#blog" class="hover:text-white transition duration-300">ලිපි</a></li>
+                    <li><a href="#contact" class="hover:text-white transition duration-300">සම්බන්ධ වන්න</a></li>
+                </ul>
+            </div>
+             <div>
+                <h5 class="text-lg font-semibold text-white mb-4">අපේ සේවාවන්</h5>
+                <ul class="space-y-2 text-sm">
+                     <li><a href="#" onclick="openModal('hairModal')" class="hover:text-white transition duration-300">කෙස් සැකසුම්</a></li>
+                     <li><a href="#" onclick="openModal('colorModal')" class="hover:text-white transition duration-300">වර්ණ ගැන්වීම්</a></li>
+                     <li><a href="#" onclick="openModal('skinModal')" class="hover:text-white transition duration-300">සමේ සත්කාර</a></li>
+                     <li><a href="#" onclick="openModal('bridalModal')" class="hover:text-white transition duration-300">මනාලියන් සඳහා</a></li>
+                </ul>
+            </div>
+             <div>
+                <h5 class="text-lg font-semibold text-white mb-4">Subscribe වන්න</h5>
+                <p class="text-sm mb-3 font-light">නවතම දීමනා සහ උපදෙස් දැනගැනීමට.</p>
+                <form>
+                    <input type="email" placeholder="ඔබේ email ලිපිනය" class="w-full p-2 rounded bg-gray-800 border border-gray-700 focus:outline-none focus:border-purple-500 text-sm mb-2">
+                    <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded text-sm font-semibold hover:bg-purple-700 transition duration-300">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <div class="container mx-auto text-center border-t border-gray-700 pt-8 mt-8">
+            <p class="text-sm">&copy; <span id="current-year"></span> KDJ Salon. සියලුම හිමිකම් ඇවිරිණි.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Set current year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Mobile Menu Toggle
+        const menuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            // Toggle icon
+             const icon = menuButton.querySelector('i');
+             if (mobileMenu.classList.contains('hidden')) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            } else {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            }
+        });
+        // Close mobile menu when a link is clicked
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                 mobileMenu.classList.add('hidden');
+                 menuButton.querySelector('i').classList.remove('fa-times');
+                 menuButton.querySelector('i').classList.add('fa-bars');
+            });
+        });
+
+        // Smooth Scroll Adjustment for Sticky Header
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                // Ensure it's an internal link and not just "#"
+                if (href.length > 1 && href.startsWith('#')) {
+                    e.preventDefault();
+                    const targetId = href;
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        const header = document.getElementById('header');
+                        const headerOffset = header ? header.offsetHeight : 70; // Adjust default offset if needed
+                        const elementPosition = targetElement.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: "smooth"
+                        });
+                    }
+                }
+            });
+        });
+
+        // Modal Functionality
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('hidden');
+                // Add transition effect classes
+                setTimeout(() => {
+                   modal.querySelector(':scope > div').classList.remove('scale-95', 'opacity-0');
+                   modal.querySelector(':scope > div').classList.add('scale-100', 'opacity-100');
+                }, 10); // Small delay for transition start
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                 modal.querySelector(':scope > div').classList.add('scale-95', 'opacity-0');
+                 modal.querySelector(':scope > div').classList.remove('scale-100', 'opacity-100');
+                 setTimeout(() => {
+                    modal.classList.add('hidden');
+                    document.body.style.overflow = ''; // Restore background scrolling
+                }, 300); // Match transition duration
+            }
+        }
+         // Close modal if clicked outside the content area
+        document.querySelectorAll('.fixed.inset-0').forEach(modal => {
+            modal.addEventListener('click', function(event) {
+                if (event.target === this) { // Check if the click is on the backdrop itself
+                    const modalContent = this.querySelector(':scope > div');
+                     if (!modalContent.contains(event.target)) { // Ensure click wasn't inside the content box
+                       closeModal(this.id);
+                    }
+                }
+            });
+        });
+
+        // Simple Form Submission Placeholder
+        const bookingForm = document.getElementById('booking-form');
+        const formMessage = document.getElementById('form-message');
+        if(bookingForm) {
+            bookingForm.addEventListener('submit', function(e) {
+                e.preventDefault(); // Prevent actual submission for now
+                 // Basic validation example (can be enhanced)
+                const name = document.getElementById('name').value;
+                const phone = document.getElementById('phone').value;
+                const service = document.getElementById('service').value;
+
+                if (name && phone && service) {
+                    formMessage.textContent = 'ඔබේ ඉල්ලීම ලැබුණි! අපි ඉක්මනින් ඔබව සම්බන්ධ කරගන්නෙමු.';
+                    formMessage.className = 'text-sm text-center mt-4 text-green-600';
+                    bookingForm.reset(); // Clear the form
+                } else {
+                    formMessage.textContent = 'කරුණාකර අවශ්‍ය සියලු තොරතුරු පුරවන්න.';
+                     formMessage.className = 'text-sm text-center mt-4 text-red-600';
+                }
+                // In a real application, you would send this data to a server here.
+                // e.g., using fetch() API
+                setTimeout(() => { formMessage.textContent = ''; }, 5000); // Clear message after 5s
+            });
+        }
+
+        // Change header background on scroll
+        const header = document.getElementById('header');
+         window.addEventListener('scroll', () => {
+             if (window.scrollY > 50) {
+                 header.classList.add('bg-white', 'bg-opacity-80', 'shadow-md');
+                 header.classList.remove('bg-opacity-10'); // Adjust initial opacity if needed
+             } else {
+                 header.classList.remove('bg-white', 'bg-opacity-80', 'shadow-md');
+                 header.classList.add('bg-opacity-10');
+             }
+         });
+
+    </script>
+    <script src="three-background.js" defer></script>
+     <script src="p5-sketch.js" defer></script>
+
+</body>
+</html>
